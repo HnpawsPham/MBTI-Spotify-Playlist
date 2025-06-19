@@ -10,13 +10,12 @@ SPOTIFY_CLIENT_SECRET = st.secrets["SPOTIFY_CLIENT_SECRET"]
 auth_manager = SpotifyOAuth(
     client_id = SPOTIFY_CLIENT_ID,
     client_secret = SPOTIFY_CLIENT_SECRET,
-    redirect_uri = "https://mbti-spotify-playlist.streamlit.app/Analysis/callback",
+    redirect_uri = "https://mbti-spotify-playlist.streamlit.app/callback",
     scope = "playlist-read-private",
     show_dialog=True
 )
 
 query_params = st.query_params
-st.write(query_params)
 
 if "code" not in query_params:
     login_url = auth_manager.get_authorize_url()
