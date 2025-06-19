@@ -6,7 +6,7 @@ if "code" in query_params:
     code = query_params["code"]
 
     st.markdown(f"""
-        <meta http-equiv="refresh" content="0; url=/Analysis?code={code}" />
+        <meta http-equiv="refresh" content="0; url=Analysis?code={code}" />
     """, unsafe_allow_html=True)
     
     st.write("Đang chuyển hướng...")
