@@ -13,7 +13,7 @@ SPOTIFY_CLIENT_SECRET = st.secrets["SPOTIFY_CLIENT_SECRET"]
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
     client_id = SPOTIFY_CLIENT_ID,
     client_secret = SPOTIFY_CLIENT_SECRET,
-    redirect_uri = "https://spotify-playlist-mbti.streamlit.app/callback",
+    redirect_uri = "https://mbti-spotify-playlist.streamlit.app/callback",
     scope = "playlist-read-private"
 ))
 
@@ -62,16 +62,15 @@ playlist_url = st.text_input("Dán link playlist Spotify vào đây", placeholde
 if playlist_url:
     if validators.url(playlist_url):
         playlist_id = extract_playlist_id(playlist_url)
-        playlist = sp.playlist(playlist_id)
+        playlist = sp.playlist(playlist_id, market="VN")
         
         st.write(playlist["name"])
-        # st.image(playlist["images"][0]["url"], caption="Playlist của bạn")
+        st.image(playlist["images"][0]["url"], caption="Playlist của bạn")
         
         # show playlist info
-        # st.write(playlist_info(playlist))
-        # st.write(sp.audio_features(['11dFghVXANMlKmJXsNCbNl']))
-        os.write("hello")
-
+        st.write(playlist_info(playlist))
+        st.write(sp.audio_features(['11dFghVXANMlKmJXsNCbNl']))
+        
     else:
         st.warning("URL không hợp lệ hoặc không thể tìm thấy")
 else:
