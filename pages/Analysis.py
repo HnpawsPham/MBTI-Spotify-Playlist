@@ -7,12 +7,34 @@ SPOTIFY_CLIENT_ID = st.secrets["SPOTIFY_CLIENT_ID"]
 SPOTIFY_CLIENT_SECRET = st.secrets["SPOTIFY_CLIENT_SECRET"]
 
 # SPOTIFY API
-sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
+auth_manager = SpotifyOAuth(
     client_id = SPOTIFY_CLIENT_ID,
     client_secret = SPOTIFY_CLIENT_SECRET,
     redirect_uri = "https://mbti-spotify-playlist.streamlit.app/Analysis/callback",
-    scope = "playlist-read-private"
-))
+    scope = "playlist-read-private",
+    show_dialog=True
+)
+
+query_params = st.query_params
+
+if "code" not in query_params:
+    login_url = auth_manager.get_authorize_url()
+    st.markdown(f"👉 [Nhấn vào đây để đăng nhập Spotify]({login_url})")
+    st.stop()
+
+code = query_params["code"]
+
+try:
+    token_info = auth_manager.get_access_token(code)
+    access_token = token_info["access_token"]
+    st.success("✅ Đăng nhập thành công!")
+except Exception as e:
+    st.error("Lỗi khi lấy access token")
+    st.exception(e)
+    st.stop()
+
+# create Client
+sp = spotipy.Spotify(auth=access_token)
 
 # GET PLAYLIST ID BY URL
 @st.cache_data
