@@ -94,7 +94,8 @@ if playlist_url:
         
         # show playlist info
         # st.write(playlist_info(playlist))
-        st.write(sp.audio_features(['11dFghVXANMlKmJXsNCbNl']))
+        st.write(sp.track("4VqPOruhp5EdPBeGVk9Ppz"))
+        st.write(sp.audio_features(['4VqPOruhp5EdPBeGVk9Ppz']))
         
     else:
         st.warning("URL không hợp lệ hoặc không thể tìm thấy")
