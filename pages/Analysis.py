@@ -35,7 +35,7 @@ except Exception as e:
 
 # create Client
 sp = spotipy.Spotify(auth=access_token)
-
+sp.current_user()
 # GET PLAYLIST ID BY URL
 @st.cache_data
 def extract_playlist_id(url):
@@ -45,33 +45,38 @@ def extract_playlist_id(url):
 # GET PLAYLIST INFO
 def playlist_info(playlist):
     track_ids = [item['track']['id'] for item in playlist['tracks']['items'] if item['track'] and item['track']['id']]
-
+    features = sp.audio_features(track_ids)
+    if features:
+        features = ([f for f in features if f])  # remove none
     # split into 100 songs for each
-    chunks = [track_ids[i:i+100] for i in range(0, len(track_ids), 100)]
-    print(chunks)
-    all_features = []
-    for chunk in chunks:
-        try:
-            features = sp.audio_features(chunk)
-            if features:
-                all_features.extend([f for f in features if f])  # remove none 
-        except Exception as err:
-            st.warning("Có lỗi xảy ra, vui lòng thử lại!")
-            print(err)
-            continue
+    # chunks = [track_ids[i:i+100] for i in range(0, len(track_ids), 100)]
+    # print(chunks)
+    # all_features = []
+    # for chunk in chunks:
+    #     try:
+    #         features = sp.audio_features(chunk)
+    #         if features:
+    #             all_features.extend([f for f in features if f])  # remove none 
+    #     except Exception as err:
+    #         st.warning("Có lỗi xảy ra, vui lòng thử lại!")
+    #         print(err)
+    #         continue
 
-    if not all_features:
-        return None
+    # if not all_features:
+    #     return None
 
-    n = len(all_features)
+    # n = len(all_features)
+    n = len(features)
+
+    st.write(features)
 
     return {    
-        "danceability": sum(f["danceability"] for f in all_features) / n,
-        "energy": sum(f["energy"] for f in all_features) / n,
-        "tempo": sum(f["tempo"] for f in all_features) / n,
-        "valence": sum(f["valence"] for f in all_features) / n,
-        "acousticness": sum(f["acousticness"] for f in all_features) / n,
-        "instrumentalness": sum(f["instrumentalness"] for f in all_features) / n
+        "danceability": sum(f["danceability"] for f in features) / n,
+        "energy": sum(f["energy"] for f in features) / n,
+        "tempo": sum(f["tempo"] for f in features) / n,
+        "valence": sum(f["valence"] for f in features) / n,
+        "acousticness": sum(f["acousticness"] for f in features) / n,
+        "instrumentalness": sum(f["instrumentalness"] for f in features) / n
     }
 
 
@@ -87,7 +92,7 @@ if playlist_url:
         st.image(playlist["images"][0]["url"], caption="Playlist của bạn")
         
         # show playlist info
-        st.write(playlist_info(playlist))
+        # st.write(playlist_info(playlist))
         st.write(sp.audio_features(['11dFghVXANMlKmJXsNCbNl']))
         
     else:
