@@ -34,8 +34,9 @@ except Exception as e:
     st.stop()
 
 # create Client
-sp = spotipy.Spotify(auth=access_token)
-sp.current_user()
+sp = spotipy.Spotify(auth_manager=auth_manager)
+st.write(sp.current_user())
+
 # GET PLAYLIST ID BY URL
 @st.cache_data
 def extract_playlist_id(url):
