@@ -27,7 +27,7 @@ code = query_params["code"]
 try:
     token_info = auth_manager.get_access_token(code)
     access_token = token_info["access_token"]
-    st.success("✅ Đăng nhập thành công!")
+    st.success("Đăng nhập thành công!")
 except Exception as e:
     st.error("Lỗi khi lấy access token")
     st.exception(e)
