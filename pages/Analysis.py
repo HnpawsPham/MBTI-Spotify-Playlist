@@ -38,13 +38,13 @@ st.header("Phân tích Audio Features của Playlist trên Spotify")
 # CHECK LOGIN
 if "code" not in st.query_params:
     login_url = auth_manager.get_authorize_url()
-    st.markdown(f"👉 [Nhấn vào đây để đăng nhập Spotify]({login_url})")
+    st.markdown(f"Nhấn vào đây để đăng nhập Spotify ({login_url})")
     st.stop()
 
 user = sp.current_user()
-st.success(f"👤 Đăng nhập thành công! {user['display_name']} ({user['id']})")
+st.success(f"Đăng nhập thành công! {user['display_name']} ({user['id']})")
 
-playlist_url = st.text_input("🔗 Dán link playlist Spotify:", "")
+playlist_url = st.text_input("Dán link playlist Spotify:", "")
 if playlist_url:
     playlist_id = extract_playlist_id(playlist_url)
 
@@ -77,6 +77,6 @@ if playlist_url:
                 st.write(features)
 
         else:
-            st.warning("⚠️ Không có audio features hợp lệ được lấy về.")
+            st.warning("Không có audio features hợp lệ được lấy về.")
     else:
-        st.warning("❌ URL playlist không hợp lệ.")
+        st.warning("URL playlist không hợp lệ.")
