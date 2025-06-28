@@ -28,12 +28,17 @@ code = params["code"][0]
 
 try:
     token_info = auth_manager.get_access_token(code, as_dict=False)
+    st.write("Token info:", token_info)
+    st.write("Token type:", type(token_info))
+    sp = spotipy.Spotify(auth=str(token_info))
+    test_feature = sp.audio_features(["1UcyzhmBDfdw07DiuT7DEG"])
+    st.write("Test feature:", test_feature)
 except Exception as e:
-    st.error("Lỗi xác thực Spotify. Vui lòng thử đăng nhập lại.")
+    st.error("Lỗi xác thực hoặc truy cập Spotify API.")
     st.exception(e)
     st.stop()
 
-print(token_info)
+st.write(token_info)
 sp = spotipy.Spotify(auth=token_info)
 
 test_feature = sp.audio_features(["1UcyzhmBDfdw07DiuT7DEG"])
