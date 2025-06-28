@@ -2,6 +2,7 @@ import streamlit as st
 import validators, spotipy, re
 import pandas as pd
 from spotipy.oauth2 import SpotifyOAuth
+from tensorflow.keras.models import load_model
 
 SPOTIFY_CLIENT_ID = st.secrets["SPOTIFY_CLIENT_ID"]
 SPOTIFY_CLIENT_SECRET = st.secrets["SPOTIFY_CLIENT_SECRET"]
@@ -99,11 +100,14 @@ if playlist_url:
         
         # show playlist info
         # st.write(playlist_info(playlist))
-        st.write(sp.track("4VqPOruhp5EdPBeGVk9Ppz", market=None))
         st.write(sp.track("3n3Ppam7vgaVa1iaRUc9Lp", market=None))
-        st.write(sp.audio_features(['4VqPOruhp5EdPBeGVk9Ppz']))
+        # st.write(sp.audio_features(['4VqPOruhp5EdPBeGVk9Ppz']))
     
     else:
         st.warning("URL không hợp lệ hoặc không thể tìm thấy")
 else:
     st.warning("Bạn cần nhập URL trước khi xem kết quả")
+
+
+def getFuncPairModelPredict():
+    model = load_model("./models/func_pair_model.keras")
