@@ -26,14 +26,6 @@ if "code" not in params:
 
 code = params["code"][0]
 
-try:
-    token_info = auth_manager.get_access_token(code)
-    st.success("Đăng nhập thành công!")
-except Exception as e:
-    st.error("Lỗi khi lấy access token")
-    st.exception(e)
-    st.stop()
-
 token_info = auth_manager.get_access_token(code, as_dict=False)
 sp = spotipy.Spotify(auth=token_info)
 st.write(sp._auth_headers())
