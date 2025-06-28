@@ -117,7 +117,11 @@ if playlist_url:
             st.image(playlist["images"][0]["url"], caption="Ảnh Playlist")
 
         # Xử lý tiếp
-        audio_stats = get_audio_features_safe(playlist)
+        audio_stats = get_audio_features_safe([
+            item["track"]["id"]
+            for item in playlist["tracks"]["items"]
+            if item["track"] and item["track"]["id"]
+        ])
         st.write("audio features:", audio_stats)
 
     else:
