@@ -11,7 +11,7 @@ auth_manager = SpotifyOAuth(
     client_id=SPOTIFY_CLIENT_ID,
     client_secret=SPOTIFY_CLIENT_SECRET,
     redirect_uri="https://mbti-spotify-playlist1.streamlit.app/callback",
-    scope="playlist-read-private user-read-private user-library-read",
+    scope="playlist-read-private user-library-read user-read-email",
     show_dialog=True,
     cache_path=".cache",
     open_browser=False
@@ -34,8 +34,12 @@ except Exception as e:
     st.exception(e)
     st.stop()
 
+token_info = auth_manager.get_access_token(code, as_dict=False)
+sp = spotipy.Spotify(auth=token_info)
+st.write(sp._auth_headers())
 
-sp = spotipy.Spotify(auth_manager=auth_manager)
+test_feature = sp.audio_features(["1UcyzhmBDfdw07DiuT7DEG"])
+st.write("Test feature:", test_feature)
 
 # GET PLAYLIST ID BY URL
 def extract_playlist_id(url):
