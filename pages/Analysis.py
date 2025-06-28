@@ -7,34 +7,33 @@ SPOTIFY_CLIENT_ID = st.secrets["SPOTIFY_CLIENT_ID"]
 SPOTIFY_CLIENT_SECRET = st.secrets["SPOTIFY_CLIENT_SECRET"]
 
 # SPOTIFY API
-auth_manager = SpotifyOAuth(
-    client_id=SPOTIFY_CLIENT_ID,
-    client_secret=SPOTIFY_CLIENT_SECRET,
-    redirect_uri="https://mbti-spotify-playlist1.streamlit.app/callback",
-    scope="playlist-read-private user-library-read user-read-email",
-    show_dialog=True,
-    cache_path=".cache",
-    open_browser=False
-)
+if 'spotify' not in st.session_state:
+    if st.button("Login with Spotify"):
+        sp_oauth = SpotifyOAuth(
+            client_id=SPOTIFY_CLIENT_ID,
+            client_secret=SPOTIFY_CLIENT_SECRET,
+            redirect_uri="https://mbti-spotify-playlist1.streamlit.app/callback",
+            scope="user-library-read playlist-read-private",
+            open_browser=False 
+        )
+        auth_url = sp_oauth.get_authorize_url()
+        st.markdown(f"Login: ({auth_url})", unsafe_allow_html=True)
 
-params = st.query_params
+    if st.experimental_get_query_params().get("code"):
+        code = st.experimental_get_query_params()["code"][0]
+        try:
+           token_info = sp_oauth.get_access_token(code)
+           st.session_state.spotify = spotipy.Spotify(auth=token_info['access_token'])
+           st.success("Authentication successful!")
+        except Exception as e:
+           st.error(f"Authentication failed: {e}")
 
-if "code" not in params:
-    login_url = auth_manager.get_authorize_url()
-    st.markdown(f"Nhấn vào đây để đăng nhập Spotify ([link]({login_url}))")
-    st.stop()
+if 'spotify' in st.session_state:
+    st.write("You are now logged in!")
 
-code = params["code"][0]
-
-try:
-    token_info = auth_manager.get_access_token(code, as_dict=False)
-    sp = spotipy.Spotify(auth=token_info)
-    test_feature = sp.audio_features(["3n3Ppam7vgaVa1iaRUc9Lp"])
-    st.write("Test feature:", test_feature)
-except Exception as e:
-    st.error("Lỗi xác thực hoặc truy cập Spotify API.")
-    st.exception(e)
-    st.stop()
+    results = st.session_state.spotify.current_user_playlists()
+    for item in results['items']:
+        st.write(item['name'])
 
 # GET PLAYLIST ID BY URL
 def extract_playlist_id(url):
@@ -42,8 +41,7 @@ def extract_playlist_id(url):
     return match.group(1) if match else None
 
 # SAFE AUDIO FEATURE FETCHING
-
-def get_audio_features_safe(track_ids):
+def get_audio_features(track_ids):
     all_features = []
     chunks = [track_ids[i:i + 50] for i in range(0, len(track_ids), 50)]  # Spotify limit: 100, dùng 50 cho an toàn
 
@@ -68,7 +66,7 @@ def playlist_info(playlist):
         st.error("Playlist không có track hợp lệ")
         return None
 
-    features = get_audio_features_safe(track_ids)
+    features = get_audio_features(track_ids)
     if not features:
         st.error("Không thể lấy audio features")
         return None
@@ -93,7 +91,7 @@ if playlist_url:
         try:
             playlist = sp.playlist(playlist_id)
         except spotipy.SpotifyException as e:
-            st.error("Không thể truy cập playlist. Playlist có thể đang để riêng tư.")
+            st.error("Không thể truy cập playlist. Playlist có thể đang để riêng tư")
             st.exception(e)
             st.stop()
 
@@ -111,5 +109,6 @@ else:
     st.info("Nhập URL để bắt đầu")
 
 
+# USE TRAINED MODELS FOR GIVING PREDICTIONS
 def getFuncPairModelPredict():
     model = load_model("./models/func_pair_model.keras")
