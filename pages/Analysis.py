@@ -17,7 +17,7 @@ auth_manager = SpotifyOAuth(
     open_browser=False
 )
 
-params = st.experimental_get_query_params()
+params = st.query_params
 
 if "code" not in params:
     login_url = auth_manager.get_authorize_url()
@@ -28,8 +28,6 @@ code = params["code"][0]
 
 try:
     token_info = auth_manager.get_access_token(code, as_dict=False)
-    st.write("Token info:", token_info)
-    st.write("Token type:", type(token_info))
     sp = spotipy.Spotify(auth=token_info)
     test_feature = sp.audio_features(["3n3Ppam7vgaVa1iaRUc9Lp"])
     st.write("Test feature:", test_feature)
