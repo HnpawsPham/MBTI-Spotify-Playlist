@@ -15,18 +15,19 @@ auth_manager = SpotifyOAuth(
     show_dialog=True
 )
 
-query_params = st.query_params
+params = st.experimental_get_query_params()
 
-if "code" not in query_params:
+if "code" not in params:
     login_url = auth_manager.get_authorize_url()
     st.markdown(f"Nhấn vào đây để đăng nhập Spotify ({login_url})")
     st.stop()
 
-code = query_params["code"]
+code = params["code"][0]
 
 try:
     token_info = auth_manager.get_access_token(code)
     access_token = token_info["access_token"]
+    sp = spotipy.Spotify(auth=access_token)  # Dùng access token trực tiếp
     st.success("Đăng nhập thành công!")
 except Exception as e:
     st.error("Lỗi khi lấy access token")
@@ -34,11 +35,10 @@ except Exception as e:
     st.stop()
 
 # create Client
-sp = spotipy.Spotify(auth_manager=auth_manager)
+sp = spotipy.Spotify(auth=access_token)
 st.write(sp.current_user())
 
 # GET PLAYLIST ID BY URL
-@st.cache_data
 def extract_playlist_id(url):
     match = re.search(r"playlist/([a-zA-Z0-9]+)", url)
     return match.group(1) if match else None
