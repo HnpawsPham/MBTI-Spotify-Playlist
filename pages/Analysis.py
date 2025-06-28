@@ -1,6 +1,5 @@
 import streamlit as st
-import validators, spotipy, re
-import pandas as pd
+import validators, spotipy, re, time
 from spotipy.oauth2 import SpotifyOAuth
 from tensorflow.keras.models import load_model
 
@@ -44,6 +43,21 @@ sp = spotipy.Spotify(auth=access_token)
 def extract_playlist_id(url):
     match = re.search(r"playlist/([a-zA-Z0-9]+)", url)
     return match.group(1) if match else None
+
+
+def get_audio_features_safe(track_ids):
+    all_features = []
+    chunks = [track_ids[i:i + 100] for i in range(0, len(track_ids), 100)]
+
+    for chunk in chunks:
+        try:
+            features = sp.audio_features(chunk)
+            all_features.extend([f for f in features if f is not None])
+        except Exception as e:
+            st.warning(f"Lỗi với đoạn {chunk[:2]}...: {e}")
+        time.sleep(0.2)  
+    return all_features
+
 
 # GET PLAYLIST INFO
 def playlist_info(playlist):
@@ -103,7 +117,7 @@ if playlist_url:
             st.image(playlist["images"][0]["url"], caption="Ảnh Playlist")
 
         # Xử lý tiếp
-        audio_stats = playlist_info(playlist)
+        audio_stats = get_audio_features_safe(playlist)
         st.write("audio features:", audio_stats)
 
     else:
