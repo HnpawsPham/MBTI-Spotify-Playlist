@@ -11,7 +11,7 @@ auth_manager = SpotifyOAuth(
     client_id = SPOTIFY_CLIENT_ID,
     client_secret = SPOTIFY_CLIENT_SECRET,
     redirect_uri = "https://mbti-spotify-playlist1.streamlit.app/callback",
-    scope = "playlist-read-private",
+    scope = "user-read-private playlist-read-private user-library-read",
     show_dialog=True
 )
 
