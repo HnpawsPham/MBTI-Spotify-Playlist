@@ -30,19 +30,13 @@ try:
     token_info = auth_manager.get_access_token(code, as_dict=False)
     st.write("Token info:", token_info)
     st.write("Token type:", type(token_info))
-    sp = spotipy.Spotify(auth=str(token_info))
-    test_feature = sp.audio_features(["1UcyzhmBDfdw07DiuT7DEG"])
+    sp = spotipy.Spotify(auth=token_info)
+    test_feature = sp.audio_features(["3n3Ppam7vgaVa1iaRUc9Lp"])
     st.write("Test feature:", test_feature)
 except Exception as e:
     st.error("Lỗi xác thực hoặc truy cập Spotify API.")
     st.exception(e)
     st.stop()
-
-st.write(token_info)
-sp = spotipy.Spotify(auth=token_info)
-
-test_feature = sp.audio_features(["1UcyzhmBDfdw07DiuT7DEG"])
-st.write("Test feature:", test_feature)
 
 # GET PLAYLIST ID BY URL
 def extract_playlist_id(url):
