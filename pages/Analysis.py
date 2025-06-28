@@ -17,7 +17,7 @@ auth_manager = SpotifyOAuth(
     open_browser=False
 )
 
-params = st.experimental_get_query_params()
+params = st.query_params()
 
 if "code" not in params:
     login_url = auth_manager.get_authorize_url()
@@ -99,7 +99,8 @@ if playlist_url:
         
         # show playlist info
         # st.write(playlist_info(playlist))
-        st.write(sp.track("4VqPOruhp5EdPBeGVk9Ppz"))
+        st.write(sp.track("4VqPOruhp5EdPBeGVk9Ppz", market=None))
+        st.write(sp.track("3n3Ppam7vgaVa1iaRUc9Lp", market=None))
         st.write(sp.audio_features(['4VqPOruhp5EdPBeGVk9Ppz']))
     
     else:
