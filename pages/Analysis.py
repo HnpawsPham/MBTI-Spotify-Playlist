@@ -47,41 +47,42 @@ def extract_playlist_id(url):
 
 # GET PLAYLIST INFO
 def playlist_info(playlist):
-    track_ids = [item['track']['id'] for item in playlist['tracks']['items'] if item['track'] and item['track']['id']]
-    features = sp.audio_features(track_ids)
-    if features:
-        features = ([f for f in features if f])  # remove none
-    # split into 100 songs for each
-    # chunks = [track_ids[i:i+100] for i in range(0, len(track_ids), 100)]
-    # print(chunks)
-    # all_features = []
-    # for chunk in chunks:
-    #     try:
-    #         features = sp.audio_features(chunk)
-    #         if features:
-    #             all_features.extend([f for f in features if f])  # remove none 
-    #     except Exception as err:
-    #         st.warning("Có lỗi xảy ra, vui lòng thử lại!")
-    #         print(err)
-    #         continue
+    raw_items = playlist['tracks']['items']
+    
+    track_ids = []
+    for item in raw_items:
+        if item["track"] and item["track"]["id"]:
+            track_ids.append(item["track"]["id"])
+        else:
+            st.warning(f"Bỏ qua bài không hợp lệ: {item.get('track', {}).get('name', 'Không xác định')}")
 
-    # if not all_features:
-    #     return None
+    if not track_ids:
+        st.error("Không tìm thấy bài nào hợp lệ trong playlist")
+        return None
 
-    # n = len(all_features)
+    try:
+        features = sp.audio_features(track_ids)
+    except spotipy.SpotifyException as e:
+        st.error("Lỗi khi gọi `audio_features()`")
+        st.exception(e)
+        st.write("Track IDs bị lỗi:", track_ids)
+        return None
+
+    features = [f for f in features if f is not None]
+    if not features:
+        st.warning("Không có audio features hợp lệ")
+        return None
+
     n = len(features)
 
-    st.write(features)
-
-    return {    
+    return {
         "danceability": sum(f["danceability"] for f in features) / n,
         "energy": sum(f["energy"] for f in features) / n,
         "tempo": sum(f["tempo"] for f in features) / n,
         "valence": sum(f["valence"] for f in features) / n,
         "acousticness": sum(f["acousticness"] for f in features) / n,
-        "instrumentalness": sum(f["instrumentalness"] for f in features) / n
+        "instrumentalness": sum(f["instrumentalness"] for f in features) / n,
     }
-
 
 # UI
 playlist_url = st.text_input("Dán link playlist Spotify vào đây", placeholder = "https://open.spotify.com/playlist/4SyqPrpD1yGm33Ychi3ac0?si=b3b9d2e173c646ed")
@@ -97,7 +98,7 @@ if playlist_url:
             st.exception(e)
             st.stop()
         
-        st.write(f"** {playlist['name']}**")
+        st.write(f"** {playlist['name']}")
         if playlist["images"]:
             st.image(playlist["images"][0]["url"], caption="Ảnh Playlist")
 
