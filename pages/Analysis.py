@@ -90,21 +90,25 @@ if playlist_url:
     if validators.url(playlist_url):
         playlist_id = extract_playlist_id(playlist_url)
 
-        playlist = sp.playlist(playlist_id, market="VN")
+        try:
+            playlist = sp.playlist(playlist_id)  # không truyền market
+        except spotipy.SpotifyException as e:
+            st.error("Không thể truy cập playlist. Có thể playlist này là riêng tư hoặc không tồn tại.")
+            st.exception(e)
+            st.stop()
         
-        st.write(playlist["name"])
-        st.image(playlist["images"][0]["url"], caption="Playlist của bạn")
-        
-        # show playlist info
-        # st.write(playlist_info(playlist))
-        # st.write(sp.track("3n3Ppam7vgaVa1iaRUc9Lp", market=None))
-        st.write(sp.audio_features(['3n3Ppam7vgaVa1iaRUc9Lp']))
-    
-    else:
-        st.warning("URL không hợp lệ hoặc không thể tìm thấy")
-else:
-    st.warning("Bạn cần nhập URL trước khi xem kết quả")
+        st.write(f"** {playlist['name']}**")
+        if playlist["images"]:
+            st.image(playlist["images"][0]["url"], caption="Ảnh Playlist")
 
+        # Xử lý tiếp
+        audio_stats = playlist_info(playlist)
+        st.write("audio features:", audio_stats)
+
+    else:
+        st.warning("URL không hợp lệ.")
+else:
+    st.info("Bạn cần nhập URL trước khi xem kết quả")
 
 def getFuncPairModelPredict():
     model = load_model("./models/func_pair_model.keras")
