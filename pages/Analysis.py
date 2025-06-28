@@ -32,9 +32,9 @@ except Exception as e:
     st.error("Lỗi xác thực Spotify. Vui lòng thử đăng nhập lại.")
     st.exception(e)
     st.stop()
-    
+
+print(token_info)
 sp = spotipy.Spotify(auth=token_info)
-st.write(sp._auth_headers())
 
 test_feature = sp.audio_features(["1UcyzhmBDfdw07DiuT7DEG"])
 st.write("Test feature:", test_feature)
