@@ -37,11 +37,8 @@ except Exception as e:
     st.exception(e)
     st.stop()
 
-st.write(token_info)
-
 # create Client
 sp = spotipy.Spotify(auth=access_token)
-st.write(sp.current_user())
 
 # GET PLAYLIST ID BY URL
 def extract_playlist_id(url):
@@ -100,8 +97,8 @@ if playlist_url:
         
         # show playlist info
         # st.write(playlist_info(playlist))
-        st.write(sp.track("3n3Ppam7vgaVa1iaRUc9Lp", market=None))
-        # st.write(sp.audio_features(['4VqPOruhp5EdPBeGVk9Ppz']))
+        # st.write(sp.track("3n3Ppam7vgaVa1iaRUc9Lp", market=None))
+        st.write(sp.audio_features(['3n3Ppam7vgaVa1iaRUc9Lp']))
     
     else:
         st.warning("URL không hợp lệ hoặc không thể tìm thấy")
