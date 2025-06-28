@@ -9,20 +9,20 @@ SPOTIFY_CLIENT_SECRET = st.secrets["SPOTIFY_CLIENT_SECRET"]
 # SPOTIFY API
 if 'spotify' not in st.session_state:
     if st.button("Login with Spotify"):
-        sp_oauth = SpotifyOAuth(
+        sp = SpotifyOAuth(
             client_id=SPOTIFY_CLIENT_ID,
             client_secret=SPOTIFY_CLIENT_SECRET,
             redirect_uri="https://mbti-spotify-playlist1.streamlit.app/callback",
             scope="user-library-read playlist-read-private",
             open_browser=False 
         )
-        auth_url = sp_oauth.get_authorize_url()
+        auth_url = sp.get_authorize_url()
         st.markdown(f"Login: ({auth_url})", unsafe_allow_html=True)
 
-    if st.experimental_get_query_params().get("code"):
-        code = st.experimental_get_query_params()["code"][0]
+    if st.query_params.get("code"):
+        code = st.query_params["code"][0]
         try:
-           token_info = sp_oauth.get_access_token(code)
+           token_info = sp.get_access_token(code)
            st.session_state.spotify = spotipy.Spotify(auth=token_info['access_token'])
            st.success("Authentication successful!")
         except Exception as e:
