@@ -26,7 +26,13 @@ if "code" not in params:
 
 code = params["code"][0]
 
-token_info = auth_manager.get_access_token(code, as_dict=False)
+try:
+    token_info = auth_manager.get_access_token(code, as_dict=False)
+except Exception as e:
+    st.error("Lỗi xác thực Spotify. Vui lòng thử đăng nhập lại.")
+    st.exception(e)
+    st.stop()
+    
 sp = spotipy.Spotify(auth=token_info)
 st.write(sp._auth_headers())
 
