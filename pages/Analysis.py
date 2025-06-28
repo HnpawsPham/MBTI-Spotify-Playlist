@@ -1,39 +1,52 @@
 import streamlit as st
-import validators, spotipy, re, time
+import spotipy
+import re, time, validators
 from spotipy.oauth2 import SpotifyOAuth
-from tensorflow.keras.models import load_model
 
+# Secrets
 SPOTIFY_CLIENT_ID = st.secrets["SPOTIFY_CLIENT_ID"]
 SPOTIFY_CLIENT_SECRET = st.secrets["SPOTIFY_CLIENT_SECRET"]
 
-# SPOTIFY API
-if 'spotify' not in st.session_state:
-    if st.button("Login with Spotify"):
-        sp = SpotifyOAuth(
-            client_id=SPOTIFY_CLIENT_ID,
-            client_secret=SPOTIFY_CLIENT_SECRET,
-            redirect_uri="https://mbti-spotify-playlist1.streamlit.app/callback",
-            scope="user-library-read playlist-read-private",
-            open_browser=False 
-        )
-        auth_url = sp.get_authorize_url()
-        st.markdown(f"Login: ({auth_url})", unsafe_allow_html=True)
+# OAuth config
+if "auth_manager" not in st.session_state:
+    st.session_state.auth_manager = SpotifyOAuth(
+        client_id=SPOTIFY_CLIENT_ID,
+        client_secret=SPOTIFY_CLIENT_SECRET,
+        redirect_uri="https://mbti-spotify-playlist1.streamlit.app/callback",
+        scope="user-library-read playlist-read-private"
+    )
 
-    if st.query_params.get("code"):
-        code = st.query_params["code"][0]
+auth_manager = st.session_state.auth_manager
+
+params = st.experimental_get_query_params()
+
+# Step 1: login
+if "spotify" not in st.session_state:
+    if "code" not in params:
+        login_url = auth_manager.get_authorize_url()
+        st.markdown(f"Login with Spotify ({login_url})", unsafe_allow_html=True)
+        st.stop()
+    else:
+        code = params["code"][0]
         try:
-           token_info = sp.get_access_token(code)
-           st.session_state.spotify = spotipy.Spotify(auth=token_info['access_token'])
-           st.success("Authentication successful!")
+            token_info = auth_manager.get_access_token(code)
+            access_token = token_info["access_token"]
+            st.session_state.spotify = spotipy.Spotify(auth=access_token)
+            st.success("Đăng nhập thành công!")
         except Exception as e:
-           st.error(f"Authentication failed: {e}")
+            st.error("Đăng nhập thất bại:")
+            st.exception(e)
+            st.stop()
 
-if 'spotify' in st.session_state:
-    st.write("You are now logged in!")
+# Step 2: sau khi đã login
+sp = st.session_state.spotify
+st.write("Bạn đã đăng nhập!")
 
-    results = st.session_state.spotify.current_user_playlists()
-    for item in results['items']:
-        st.write(item['name'])
+# Xem danh sách playlist
+results = sp.current_user_playlists()
+for item in results['items']:
+    st.write(f"- {item['name']}")
+
 
 # # GET PLAYLIST ID BY URL
 # def extract_playlist_id(url):
