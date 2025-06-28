@@ -8,11 +8,13 @@ SPOTIFY_CLIENT_SECRET = st.secrets["SPOTIFY_CLIENT_SECRET"]
 
 # SPOTIFY API
 auth_manager = SpotifyOAuth(
-    client_id = SPOTIFY_CLIENT_ID,
-    client_secret = SPOTIFY_CLIENT_SECRET,
-    redirect_uri = "https://mbti-spotify-playlist1.streamlit.app/callback",
-    scope = "user-read-private playlist-read-private user-library-read",
-    show_dialog=True
+    client_id=SPOTIFY_CLIENT_ID,
+    client_secret=SPOTIFY_CLIENT_SECRET,
+    redirect_uri="https://mbti-spotify-playlist1.streamlit.app/callback",
+    scope="playlist-read-private user-read-private user-library-read",
+    show_dialog=True,
+    cache_path=".cache",
+    open_browser=False
 )
 
 params = st.get_query_params()
@@ -33,6 +35,8 @@ except Exception as e:
     st.error("Lỗi khi lấy access token")
     st.exception(e)
     st.stop()
+
+st.write(token_info)
 
 # create Client
 sp = spotipy.Spotify(auth=access_token)
