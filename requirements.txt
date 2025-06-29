@@ -10,4 +10,4 @@ grpcio==1.62.1
 tensorflow
 joblib
 plotly
-sklearn
+scikit-learn
