@@ -8,3 +8,5 @@ protobuf==4.25.3
 numpy==1.26.4
 grpcio==1.62.1
 tensorflow
+joblib
+plotly
