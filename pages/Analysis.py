@@ -3,6 +3,9 @@ import json
 import numpy as np
 from tensorflow.keras.models import load_model
 from joblib import load as joblib_load
+import spotipy
+import re, time, validators, json
+from spotipy.oauth2 import SpotifyOAuth
 
 st.title("🔍 Dự đoán MBTI Function Pair")
 
@@ -83,7 +86,7 @@ def predict_mbti(data):
 
     x = np.array([[data[k] for k in playlist_features]])
 
-    # Load các model + scaler dùng chung
+    # get models
     try:
         ie_model, ns_model, tf_model, jp_model, scaler = load_mbti_utilities()
         x_scaled = scaler.transform(x)
@@ -92,13 +95,13 @@ def predict_mbti(data):
         st.exception(e)
         return
 
-    # Dự đoán từng chiều → xác suất > 0.5 thì là 1
+    # get pred
     ie = int(ie_model.predict(x_scaled)[0][0] > 0.5)
     ns = int(ns_model.predict(x_scaled)[0][0] > 0.5)
     tf = int(tf_model.predict(x_scaled)[0][0] > 0.5)
     jp = int(jp_model.predict(x_scaled)[0][0] > 0.5)
 
-    # Kết hợp
+    
     res = get_mbti(ie, ns, tf, jp)
 
     st.success(f"Dự đoán: **{res}**")

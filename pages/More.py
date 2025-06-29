@@ -1,6 +1,7 @@
 import streamlit as st
+import pandas as pd
 
-#RECOMMEND SECTION
+# SELECTBOX
 st.title("Playlist bạn có thể thích dựa theo kết quả đã dự đoán")
 
 mbti_types = [
@@ -20,3 +21,8 @@ selected_mbti = st.selectbox(
 )
 
 st.session_state.mbti = selected_mbti
+
+# RECOMMEND SECTION
+df = pd.read_csv(f"./csv/{selected_mbti}_df.csv")
+
+st.write(df)
