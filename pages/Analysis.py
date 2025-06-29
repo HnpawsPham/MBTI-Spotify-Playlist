@@ -3,9 +3,7 @@ import json
 import numpy as np
 from tensorflow.keras.models import load_model
 from joblib import load as joblib_load
-import spotipy
-import re, time, validators, json
-from spotipy.oauth2 import SpotifyOAuth
+from utilities import *
 
 st.title("🔍 Dự đoán MBTI Function Pair")
 
@@ -23,17 +21,6 @@ def load_mbti_utilities():
     scaler = joblib_load("models/mbti_scaler.pkl")
     return ie_model, ns_model, tf_model, jp_model, scaler
 
-
-playlist_features = [
-    "danceability",
-    "energy",
-    "mode",
-    "speechiness",
-    "liveness",
-    "valence",
-    "tempo",
-    "instrumentalness",
-]
 
 # GET FILE FROM INPUT
 def load_all():
