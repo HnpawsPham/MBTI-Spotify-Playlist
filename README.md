@@ -1,7 +1,7 @@
 # Spotify-Playlist-MBTI
 
-Paste your Spotify link and you will know which MBTI is your playlist
-
+Give us your playlist audio features and you will know which MBTI is your playlist
+(Spotify API audio features is deprecated)
 Link website: 
 https://mbti-spotify-playlist1.streamlit.app/
 
