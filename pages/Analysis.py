@@ -1,9 +1,10 @@
 import streamlit as st
-import json
+import json, os, sys
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 from joblib import load as joblib_load
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from utilities import *
 
 def run():
