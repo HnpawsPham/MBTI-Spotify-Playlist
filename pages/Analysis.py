@@ -4,7 +4,6 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 from joblib import load as joblib_load
-from utilities import *
 
 def run():
     st.markdown(f'<h1 style="text-align: center;">Prediction from audio features</h1>', unsafe_allow_html=True)

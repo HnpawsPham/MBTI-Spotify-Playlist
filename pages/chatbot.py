@@ -2,14 +2,17 @@ import streamlit as st
 import json
 import pandas as pd
 import google.generativeai as genai 
-from utilities import *
-
 def run():
     # SETUP
     API = st.secrets["API"]
     genai.configure(api_key = API)
 
     # READ DATA
+    def get_16_types():
+        df = pd.read_csv("./csv/combined_mbti_df.csv")
+        mbti_types = df["mbti"].drop_duplicates().to_list()
+        return mbti_types
+    
     mbti_types = get_16_types()
 
     # LOAD CONFIG
