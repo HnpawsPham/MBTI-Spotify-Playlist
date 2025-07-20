@@ -1,12 +1,26 @@
 import streamlit as st
 import pandas as pd
 import time
-from utilities import *
 import plotly.graph_objects as go
 import plotly.express as px
 from sklearn.preprocessing import MinMaxScaler
 
 def run():
+    def get_16_types():
+        df = pd.read_csv("./csv/combined_mbti_df.csv")
+        mbti_types = df["mbti"].drop_duplicates().to_list()
+        return mbti_types
+    
+    # SHORTEN NAME, ADD IT WITH ...
+    MAX_LEN = 20
+    def shorten_name(name):
+        if len(name) < MAX_LEN:
+            return name
+
+        name = name[:20] + '...' 
+        return name
+
+
     # SELECTBOX
     st.markdown(f'<h1 style="text-align: center;">Some recommendations for you</h1>', unsafe_allow_html=True)
     st.markdown("<br><br>", unsafe_allow_html=True)

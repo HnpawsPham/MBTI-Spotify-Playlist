@@ -1,14 +1,24 @@
 import streamlit as st
-import json, os, sys
+import json
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 from joblib import load as joblib_load
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from utilities import *
 
 def run():
     st.markdown(f'<h1 style="text-align: center;">Prediction from audio features</h1>', unsafe_allow_html=True)
+
+    playlist_features = [
+        "danceability",
+        "energy",
+        "mode",
+        "speechiness",
+        "liveness",
+        "valence",
+        "tempo",
+        "instrumentalness",
+    ]
 
     # LOAD MODEL AND SCALER
     @st.cache_resource
